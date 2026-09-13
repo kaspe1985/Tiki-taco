@@ -1,0 +1,10 @@
+{
+  "name": "Tiki Taco POS",
+  "short_name": "Tiki Taco",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f1e8",
+  "theme_color": "#176b3a",
+  "description": "Sistema POS de restaurante para Tiki Taco"
+}
