@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#176b3a">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="Tiki Taco POS">
+<title>Tiki Taco POS</title>
+<style>
+:root{--green:#176b3a;--red:#b52323;--gold:#d99a19;--bg:#f7f1e8;--line:#e4d8c9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#241f1b;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);padding:12px 15px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:950;letter-spacing:1.5px;color:var(--red)}.tag{font-size:11px;color:#756b63}.live{font-size:11px;font-weight:800;color:var(--green)}
+main{max-width:1250px;margin:auto;padding:12px}.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:12px}.tabs button{border:0;border-radius:9px;padding:10px 14px;background:#fff;color:#5f554d;font-weight:800;white-space:nowrap}.tabs button.active{background:var(--green);color:#fff}.inv-form{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:end}.inv-form input{width:100%;border:1px solid #d9cbbb;border-radius:8px;padding:10px;background:#fff}.inv-table{width:100%;border-collapse:collapse;margin-top:10px}.inv-table th,.inv-table td{padding:9px 6px;border-bottom:1px solid #eee5dc;text-align:left;font-size:11px}.inv-table th{color:#6e645c;font-size:10px}.stock-ok{font-weight:900;color:var(--green)}.stock-low{font-weight:900;color:var(--red)}.inv-actions button{border:1px solid #d9cbbb;background:#fff;border-radius:7px;padding:6px 8px;font-weight:900;margin-right:4px}.inv-actions .in{color:var(--green)}.inv-actions .out{color:var(--red)}
+@media(max-width:700px){.inv-form{grid-template-columns:1fr 1fr}.inv-form button{grid-column:1/-1}.inv-table{min-width:650px}.inv-scroll{overflow:auto}}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:0 3px 15px #00000009}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:17px;margin:0 0 7px}h3{font-size:14px;margin:17px 0 7px}p{font-size:12px;color:#746c65}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.controls input,.controls select{width:100%;border:1px solid #d9cbbb;border-radius:8px;padding:10px;background:#fff}
+.cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0}.cats button{border:1px solid #d9cbbb;background:#fffaf3;color:#241f1b;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:900;line-height:1.1;min-height:46px;touch-action:manipulation;box-shadow:0 2px 5px #0000000a}.cats button.active{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 3px 8px #b5232330}.cats button:nth-child(3n){border-bottom:3px solid var(--gold)}.cats button:nth-child(3n+2){border-bottom:3px solid var(--green)}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.product{border:1px solid var(--line);background:#fffdf9;border-radius:11px;padding:12px;text-align:left;min-height:105px}.product:active{transform:scale(.99)}.ico{font-size:23px}.pn{font-size:12px;font-weight:850;line-height:1.25;display:block;margin:6px 0}.pp{font-size:15px;font-weight:950;color:var(--red)}.muted{font-size:9px;color:#888}
+.order{position:sticky;top:72px;height:max-content}.order-head{display:flex;justify-content:space-between;align-items:center}.badge{background:#f1eadf;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900}
+.item{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #eee5dc;padding:10px 0}.item b{font-size:12px}.item small{display:block;color:#888;font-size:10px;margin-top:3px}.mods{font-size:9px;color:#8b5d2c;line-height:1.35;margin-top:3px}.qty{white-space:nowrap}.qty button{width:27px;height:27px;border:1px solid #ddd1c5;border-radius:6px;background:#fff}.qty span{display:inline-block;width:22px;text-align:center;font-size:12px;font-weight:900}
+.total{display:flex;justify-content:space-between;font-size:19px;font-weight:900;padding:13px 0}.total strong{color:var(--green)}
+.btn{width:100%;border:0;border-radius:9px;padding:12px;margin-top:7px;font-weight:900}.send{background:var(--green);color:#fff}.clear{background:#eee6dc}.gold{background:var(--gold);color:#1d180e}.danger{background:#b52323;color:#fff}
+.empty{text-align:center;padding:32px 8px;color:#8a8179;font-size:12px}.table-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.table{border:2px solid #b9d8c2;background:#eaf5ed;border-radius:12px;padding:20px 4px;color:var(--green);font-weight:900}.table.busy{border-color:#e5aaa5;background:#fff0ef;color:var(--red)}
+.ticket{border:1px solid var(--line);border-radius:12px;background:#fff;padding:13px;margin-top:9px}.ticket-top{display:flex;justify-content:space-between;gap:10px}.status{font-size:10px;font-weight:900;padding:5px 7px;border-radius:7px;background:#fff0cf;color:#795000}.ticket ul{margin:8px 0;padding-left:18px;font-size:11px}.ticket li{margin:5px 0}.ticket .mods{font-size:9px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#faf7f1;border:1px solid var(--line);border-radius:10px;padding:12px}.stat b{display:block;font-size:20px;color:var(--green)}.stat span{font-size:10px;color:#777}
+.modal-bg{position:fixed;inset:0;background:#0008;z-index:50;display:flex;align-items:center;justify-content:center;padding:14px}.modal{width:min(520px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;padding:18px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.check{display:flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fcfaf6;font-size:11px}.check input{width:18px;height:18px}.modal textarea{width:100%;min-height:75px;border:1px solid #d9cbbb;border-radius:8px;padding:10px}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.modal-actions button{border:0;border-radius:9px;padding:12px;font-weight:900}.modal-cancel{background:#eee6dc}.modal-ok{background:var(--green);color:#fff}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.order{position:static}.products{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){main{padding:8px}.cats{gap:7px;justify-content:center}.cats button{padding:10px 12px;font-size:13.5px;min-height:45px}.products{grid-template-columns:repeat(2,1fr);gap:6px}.product{padding:9px;min-height:100px}.table-grid{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.checks{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div><div class="logo">TIKI TACO</div><div class="tag">POS de restaurante</div></div><div class="live">● Sistema activo</div></header>
+<main><nav id="tabs" class="tabs"></nav><div id="screen"></div></main>
+<script>
+"use strict";
+const MENU={
+"Tacos":[["Tacos de Cochinita",4.75,"🌮"],["Tacos de Pollo al Aijillo",4.75,"🌮"],["Tacos de Birria",5.75,"🌮"],["Tacos de Camarón",5.75,"🌮"],["Tacos de Arrachera",6,"🌮"],["Tacos Dorados",6.5,"🌮"],["Tacos al Pastor",4.75,"🌮"]],
+"Burritos":[["Burritos de Pollo al Aijillo",7.25,"🌯"],["Burritos de Pastor",7.25,"🌯"],["Burrito de Cochinita",7.25,"🌯"],["Burrito de Camarón",7.75,"🌯"],["Burrito Vegetariano",7.75,"🌯"],["Burrito de Birria",7.75,"🌯"],["Burrito de Chilaquil",8,"🌯"]],
+"Tortas":[["Torta de Pastor",7.5,"🥪"],["Torta de Cochinita",7.5,"🥪"],["Torta de Pollo al Aijillo",7.5,"🥪"],["Torta de Birria",7.75,"🥪"],["Torta de Milanesa",7.75,"🥪"],["Torta Cubana",8.5,"🥪"],["Torta de Champiñones",7.75,"🥪"],["Torta de Berenjena",7.5,"🥪"]],
+"Quesadillas":[["Quesadilla de Pastor",5.75,"🧀"],["Quesadilla de Pollo al Aijillo",5.75,"🧀"],["Quesadilla de Champiñones",6.25,"🧀"],["Quesadilla de Birria",6.25,"🧀"],["Quesadilla de Cochinita",6.25,"🧀"],["Quesadilla de Camarón",6.25,"🧀"],["Quesadilla Especial",7.5,"🧀"]],
+"Nachos":[["Nachos con Guacamole",5.25,"🧀"],["Nachos con Frijoles",5.25,"🧀"],["Nachos con Queso",5.75,"🧀"],["Nachos Tiki Taco",7.75,"🧀"],["Nachos Vegetarianos",7.25,"🥑"],["Champi-queso",7,"🧀"],["Elotes",2.75,"🌽"],["Esquites",3,"🌽"],["Funda de Nachos",5.5,"🌽"]],
+"Chilaquiles":[["Chilaquil en Salsa Verde",8.75,"🥘"],["Chilaquil en Salsa Roja",8.75,"🥘"],["Chilaquil Divorciado",9.5,"🥘"],["Enfrijoladas",8.75,"🥘"]],
+"Enchiladas":[["Enchilada con Salsa Verde",8.75,"🥘"],["Enchilada con Salsa Roja",8.75,"🥘"],["Enchilada Suiza",9.5,"🥘"]],
+"Tradicionales":[["Hamburguesa Regular",4.25,"🍔"],["Hamburguesa Especial",4.75,"🍔"],["Mexican Burguer",7.75,"🍔"],["Porción de papas",3,"🍟"],["Papi pollo",4,"🍗"],["Papas Tiki Taco",5.5,"🍟"],["Alitas 6 und y papas",6.75,"🍗"],["Alitas 10 und y papas",11,"🍗"]],
+"Extras":[["Extra de Carne al Pastor (100g)",2.5,"➕"],["Extra de Carne de Cochinita (100g)",2.5,"➕"],["Extra de Pollo al Aijillo (100g)",2.5,"➕"],["Extra de Camarón (100g)",3,"➕"],["Extra de Milanesa de Res (100g)",3,"➕"],["Extra de Huevo Frito",1,"🍳"]],
+"Bebidas Mexicanas":[["Cantarito",5.25,"🍹"],["Clamato o Michelada",5.25,"🍹"],["Coctel Margarita",5.25,"🍸"]],
+"Bebidas Alcohólicas":[["Cerveza Club",2.5,"🍺"],["Cerveza Pilsener pequeña",2.5,"🍺"],["Cerveza Pilsener grande",4.75,"🍺"],["Cerveza Corona",3.5,"🍺"],["Cerveza Modelo",3.5,"🍺"],["Cusqueña Dark large",3.5,"🍺"],["Cusqueña Wheat beer",3.5,"🍺"]],
+"Bebidas Frías":[["Coca Cola",1,"🥤"],["Fanta",1,"🥤"],["Sprite",1,"🥤"],["Fuze Tea",1,"🥤"],["Agua Dasani",1,"💧"],["Agua Dasani con gas",1,"💧"],["Agua de Jamaica",1.5,"🥤"],["Agua de Tamarindo",1.5,"🥤"]],
+"Bebidas Calientes":[["Café Americano",1,"☕"],["Aguas Aromáticas",1,"☕"],["Capuchino",2.5,"☕"],["Mocachino",3,"☕"]]
+};
+const MODS=["Sin frijoles","Sin guacamole","Sin lechuga","Sin cebolla","Sin queso","Sin crema agria","Sin tomate","Sin aguacate","Sin piña","Sin jalapeños","Sin tocino","Sin mayonesa"];
+let state={tab:"Pedido",cat:"Tacos",table:"Mesa 1",type:"Para consumir aquí",name:"",cart:[],orders:[],modal:null,inventory:[]};
+try{state.orders=JSON.parse(localStorage.getItem("tt_pos_orders")||"[]")}catch(e){state.orders=[]}
+try{state.inventory=JSON.parse(localStorage.getItem("tt_pos_inventory")||"[]")}catch(e){state.inventory=[]}
+const $=id=>document.getElementById(id), money=n=>"$"+Number(n).toFixed(2);
+function save(){localStorage.setItem("tt_pos_orders",JSON.stringify(state.orders));localStorage.setItem("tt_pos_inventory",JSON.stringify(state.inventory))}
+function cartTotal(){return state.cart.reduce((s,x)=>s+x.price*x.qty,0)+(state.type==="Para llevar +$0.50"?0.5:0)}
+function render(){
+ $("tabs").innerHTML=["Pedido","Cocina","Mesas","Caja","Ventas","Inventario"].map(x=>`<button class="${state.tab===x?"active":""}" data-tab="${x}">${x}</button>`).join("");
+ $("screen").innerHTML=state.tab==="Pedido"?pedido():state.tab==="Cocina"?kitchen():state.tab==="Mesas"?tables():state.tab==="Inventario"?inventory():summary(state.tab);
+ renderModal();
+}
+function pedido(){
+  const products=MENU[state.cat];
+  const locationChosen=state.type==="Para llevar +$0.50" || (state.type==="Para consumir aquí" && state.table);
+  if(!locationChosen){
+    return `<section class="card" style="max-width:760px;margin:auto;text-align:center"><h1>📍 Nuevo pedido</h1><p>Primero selecciona dónde se servirá el pedido.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><button class="btn" data-start-local style="background:var(--green);color:#fff;font-size:16px;padding:22px 10px">🍽️ SERVIRSE EN EL LOCAL<br><small>Seleccionar mesa</small></button><button class="btn" data-start-takeaway style="background:var(--gold);color:#1d180e;font-size:16px;padding:22px 10px">🥡 PARA LLEVAR<br><small>+ $0.50 por pedido</small></button></div></section>`;
+  }
+  return `<div class="grid"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><h1>Nuevo pedido</h1><p style="margin:0">${state.type==="Para llevar +$0.50"?"🥡 Para llevar":"🍽️ "+state.table}</p></div><button class="btn clear" data-change-location style="width:auto;margin:0;padding:9px 12px">Cambiar</button></div><div class="cats">${Object.keys(MENU).map(g=>`<button class="${g===state.cat?"active":""}" data-cat="${g}">${g}</button>`).join("")}</div><div class="products">${products.map((p,i)=>`<button class="product" data-product="${i}"><span class="ico">${p[2]}</span><span class="pn">${p[0]}</span><span class="pp">${money(p[1])}</span><span class="muted">Personalizar</span></button>`).join("")}</div></section><aside class="card order"><div class="order-head"><h2>Comanda</h2><span class="badge">${state.cart.reduce((s,x)=>s+x.qty,0)} productos</span></div><input id="customer" value="${state.name}" placeholder="Nombre del cliente (opcional)" style="width:100%;margin:8px 0;padding:10px;border:1px solid #d9cbbb;border-radius:8px">${state.cart.length?state.cart.map(x=>`<div class="item"><div><b>${x.qty} × ${x.name}</b><small>${money(x.price)} c/u</small>${x.mods.length?`<div class="mods">${x.mods.join(" · ")}</div>`:""}${x.note?`<div class="mods">Nota: ${x.note}</div>`:""}</div><div class="qty"><button data-minus="${x.id}">−</button><span>${x.qty}</span><button data-plus="${x.id}">+</button></div></div>`).join(""):`<div class="empty">Agrega un producto para comenzar.</div>`}<div class="total"><span>Total</span><strong>${money(cartTotal())}</strong></div><button class="btn send" id="send" ${state.cart.length?"":"disabled"}>👨‍🍳 REVISAR Y ENVIAR A COCINA</button><button class="btn clear" id="clear" ${state.cart.length?"":"disabled"}>Vaciar pedido</button></aside></div>`;
+}
+function chooseLocation(){
+  const old=document.querySelector('.modal-bg');if(old)old.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-bg"><div class="modal" style="text-align:center"><h2>¿Dónde es el pedido?</h2><p>Selecciona primero la mesa o para llevar.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"><button class="modal-ok" data-pick-local>🍽️ LOCAL</button><button class="modal-ok" data-pick-takeaway style="background:var(--gold);color:#1d180e">🥡 PARA LLEVAR<br><small>+$0.50</small></button></div><div id="tablePicker" style="display:none;margin-top:12px"><p><b>Selecciona la mesa</b></p><div class="table-grid">${Array.from({length:12},(_,i)=>`<button class="table" data-pick-table="Mesa ${i+1}">Mesa ${i+1}</button>`).join('')}</div></div><button class="btn clear" data-close-location style="margin-top:10px">Cancelar</button></div></div>`);
+}
+
+function kitchen(){
+ const active=state.orders.filter(o=>o.status!=="Cobrado");
+ return `<section><h1>👨‍🍳 Cocina</h1><p>Todos los pedidos enviados quedan guardados aquí.</p>${active.length?active.map(o=>`<article class="ticket"><div class="ticket-top"><div><b>${o.table}</b>${o.name?` · ${o.name}`:""}<div class="muted">${o.type}${o.phone?` · 📞 ${o.phone}`:""}</div>${o.note?`<div class="mods">Nota: ${o.note}</div>`:""}</div><span class="status">${o.status}</span></div><ul>${o.items.map(x=>`<li><b>${x.qty} × ${x.name}</b>${x.mods.length?`<div class="mods">${x.mods.join(" · ")}</div>`:""}${x.note?`<div class="mods">Nota: ${x.note}</div>`:""}</li>`).join("")}</ul><b>${money(o.total)}</b>${o.status==="En cocina"?`<button class="btn send" data-ready="${o.id}">✓ MARCAR PREPARADO</button>`:`<button class="btn gold" data-pay="${o.id}">💵 COBRAR</button>`}</article>`).join(""):`<div class="card empty">No hay pedidos en cocina.</div>`}</section>`;
+}
+function tables(){
+ return `<section class="card"><h1>Mesas</h1><p>Toca una mesa para iniciar un pedido.</p><div class="table-grid">${Array.from({length:12},(_,i)=>{const n="Mesa "+(i+1),busy=state.orders.some(o=>o.table===n&&o.status!=="Cobrado");return `<button class="table ${busy?"busy":""}" data-table="${n}">${n}<small style="display:block;font-size:9px">${busy?"Ocupada":"Libre"}</small></button>`}).join("")}</div></section>`;
+}
+function inventory(){
+ const low=state.inventory.filter(x=>Number(x.stock)<=Number(x.min));
+ return `<section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><h1>📦 Inventario</h1><p style="margin:0">Controla existencias, costos y productos con stock bajo.</p></div><span class="badge">${state.inventory.length} productos</span></div>
+ <div class="stats" style="margin-top:12px"><div class="stat"><b>${state.inventory.reduce((s,x)=>s+Number(x.stock),0).toFixed(0)}</b><span>Unidades en stock</span></div><div class="stat"><b>${low.length}</b><span>Stock bajo</span></div><div class="stat"><b>${money(state.inventory.reduce((s,x)=>s+Number(x.stock)*Number(x.cost),0))}</b><span>Valor estimado</span></div></div>
+ <h3>Agregar producto al inventario</h3><div class="inv-form"><label><span class="muted">Producto</span><input id="invName" placeholder="Ej.: Tortillas"></label><label><span class="muted">Cantidad</span><input id="invStock" type="number" step="0.01" min="0" placeholder="0"></label><label><span class="muted">Mínimo</span><input id="invMin" type="number" step="0.01" min="0" placeholder="5"></label><label><span class="muted">Costo/unidad</span><input id="invCost" type="number" step="0.01" min="0" placeholder="0.00"></label><button class="btn send" id="addInv" style="margin:0">+ AGREGAR</button></div>
+ <h3>Productos</h3><div class="inv-scroll"><table class="inv-table"><thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th><th>Costo</th><th>Valor</th><th>Acciones</th></tr></thead><tbody>${state.inventory.length?state.inventory.map(x=>`<tr><td><b>${x.name}</b></td><td class="${Number(x.stock)<=Number(x.min)?"stock-low":"stock-ok"}">${Number(x.stock).toFixed(2)}</td><td>${Number(x.min).toFixed(2)}</td><td>${money(x.cost)}</td><td>${money(Number(x.stock)*Number(x.cost))}</td><td class="inv-actions"><button class="in" data-inv-in="${x.id}">+ Entrada</button><button class="out" data-inv-out="${x.id}">− Salida</button><button data-inv-del="${x.id}">🗑</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">Todavía no hay productos. Agrega el primero arriba.</td></tr>`}</tbody></table></div>
+ ${low.length?`<div style="margin-top:12px;padding:11px;border-radius:9px;background:#fff0ef;color:var(--red);font-size:11px;font-weight:800">⚠️ Stock bajo: ${low.map(x=>x.name).join(", ")}</div>`:""}</section>`;
+}
+function summary(which){
+ const paid=state.orders.filter(o=>o.status==="Cobrado"), total=paid.reduce((s,o)=>s+o.total,0);
+ return `<section class="card"><h1>${which}</h1><div class="stats"><div class="stat"><b>${money(total)}</b><span>Total cobrado</span></div><div class="stat"><b>${paid.length}</b><span>Ventas</span></div><div class="stat"><b>${state.orders.filter(o=>o.status!=="Cobrado").length}</b><span>Pedidos abiertos</span></div></div><h3>Últimos pedidos</h3><div>${state.orders.slice().reverse().map(o=>`<div class="item"><div><b>${o.table}</b><small>${o.status} · ${o.type}</small></div><b>${money(o.total)}</b></div>`).join("")||`<div class="empty">Todavía no hay ventas.</div>`}</div></section>`;
+}
+function renderModal(){
+ const old=document.querySelector(".modal-bg");if(old)old.remove();
+ if(!state.modal)return;
+ const m=state.modal;
+ document.body.insertAdjacentHTML("beforeend",`<div class="modal-bg" id="modalBg"><div class="modal"><h2>Personalizar pedido</h2><p><b>${m.name}</b> · ${money(m.price)}</p><p><b>Marca lo que el cliente NO quiere:</b></p><div class="checks">${MODS.map((v,i)=>`<label class="check"><input type="checkbox" data-mod="${i}" ${m.mods.includes(v)?"checked":""}>${v}</label>`).join("")}</div><label style="font-size:11px;font-weight:800">Nota para cocina</label><textarea id="note" placeholder="Ej.: salsa aparte, bien dorado...">${m.note||""}</textarea><div class="modal-actions"><button class="modal-cancel" id="modalCancel">Cancelar</button><button class="modal-ok" id="modalOk">✓ AGREGAR AL PEDIDO</button></div></div></div>`);
+ $("modalCancel").onclick=()=>{state.modal=null;render()};
+ $("modalOk").onclick=()=>{
+   if(!state.modal)return;
+   state.modal.mods=[...document.querySelectorAll("#modalBg [data-mod]:checked")].map(x=>MODS[Number(x.dataset.mod)]);
+   state.modal.note=($("note")?.value||"").trim();
+   const m2={...state.modal};
+   state.cart.push({id:String(Date.now())+Math.random(),name:m2.name,price:Number(m2.price),qty:1,mods:[...m2.mods],note:m2.note});
+   state.modal=null;render();
+ };
+}
+function sendConfirm(){
+ const old=document.querySelector(".confirm-bg"); if(old)old.remove();
+ document.body.insertAdjacentHTML("beforeend",`<div class="modal-bg confirm-bg" id="confirmBg"><div class="modal">
+ <h2>Confirmar pedido</h2>
+ <p><b>¿Cómo será el pedido?</b></p>
+ <div class="checks" style="grid-template-columns:1fr 1fr">
+   <label class="check"><input type="radio" name="serviceType" value="Para consumir aquí" ${state.type==="Para consumir aquí"?"checked":""}> 🍽️ Servirse aquí</label>
+   <label class="check"><input type="radio" name="serviceType" value="Para llevar +$0.50" ${state.type==="Para llevar +$0.50"?"checked":""}> 🥡 Para llevar +$0.50</label>
+ </div>
+ <p><b>Datos del cliente</b></p>
+ <input id="confirmName" value="${state.name.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}" placeholder="Nombre del cliente" style="width:100%;margin:4px 0 8px;padding:12px;border:1px solid #d9cbbb;border-radius:8px">
+ <input id="confirmPhone" value="${state.phone||""}" placeholder="Teléfono (opcional)" inputmode="tel" style="width:100%;margin:4px 0 8px;padding:12px;border:1px solid #d9cbbb;border-radius:8px">
+ <input id="confirmNote" value="${state.orderNote||""}" placeholder="Nota general para cocina (opcional)" style="width:100%;margin:4px 0 8px;padding:12px;border:1px solid #d9cbbb;border-radius:8px">
+ <div class="total"><span>Total</span><strong id="confirmTotal">${money(cartTotal())}</strong></div>
+ <div class="modal-actions"><button class="modal-cancel" id="confirmCancel">Cancelar</button><button class="modal-ok" id="confirmSend">✓ CONFIRMAR Y ENVIAR</button></div>
+ </div></div>`);
+ const updateTotal=()=>{
+   const selected=document.querySelector('input[name="serviceType"]:checked');
+   if(selected){state.type=selected.value;document.getElementById("confirmTotal").textContent=money(cartTotal());}
+ };
+ document.querySelectorAll('input[name="serviceType"]').forEach(r=>r.addEventListener("change",updateTotal));
+ document.getElementById("confirmCancel").onclick=()=>document.getElementById("confirmBg")?.remove();
+ document.getElementById("confirmSend").onclick=()=>{
+   if(!state.cart.length)return;
+   const selected=document.querySelector('input[name="serviceType"]:checked');
+   state.type=selected?selected.value:"Para consumir aquí";
+   state.name=(document.getElementById("confirmName")?.value||"").trim();
+   state.phone=(document.getElementById("confirmPhone")?.value||"").trim();
+   state.orderNote=(document.getElementById("confirmNote")?.value||"").trim();
+   state.orders.push({id:"TT"+Date.now(),table:state.type==="Para llevar +$0.50"?"Para llevar":state.table,name:state.name,phone:state.phone,type:state.type,total:cartTotal(),items:JSON.parse(JSON.stringify(state.cart)),note:state.orderNote,status:"En cocina",createdAt:new Date().toISOString()});
+   save(); state.cart=[]; state.name=""; state.phone=""; state.orderNote=""; state.tab="Cocina"; document.getElementById("confirmBg")?.remove(); render(); alert("✓ Pedido enviado a cocina");
+ };
+}
+document.addEventListener("click",e=>{
+  if(e.target.closest("[data-start-local]")||e.target.closest("[data-change-location]")){chooseLocation();return}
+  if(e.target.closest("[data-start-takeaway]")){state.type="Para llevar +$0.50";state.table="";render();return}
+  if(e.target.closest("[data-pick-local]")){document.getElementById("tablePicker").style.display="block";return}
+  if(e.target.closest("[data-pick-takeaway]")){state.type="Para llevar +$0.50";state.table="";render();return}
+  const pt=e.target.closest("[data-pick-table]");if(pt){state.table=pt.dataset.pickTable;state.type="Para consumir aquí";render();return}
+  if(e.target.closest("[data-close-location]")){const m=document.querySelector(".modal-bg");if(m)m.remove();return}
+ const t=e.target.closest("[data-tab]");if(t){state.tab=t.dataset.tab;render();return}
+ const c=e.target.closest("[data-cat]");if(c){state.cat=c.dataset.cat;render();return}
+ const p=e.target.closest("[data-product]");if(p){const x=MENU[state.cat][Number(p.dataset.product)];state.modal={name:x[0],price:x[1],mods:[],note:""};render();return}
+ const minus=e.target.closest("[data-minus]");if(minus){const x=state.cart.find(a=>a.id===minus.dataset.minus);if(x){x.qty--;if(x.qty<1)state.cart=state.cart.filter(a=>a.id!==x.id);render()}return}
+ const plus=e.target.closest("[data-plus]");if(plus){const x=state.cart.find(a=>a.id===plus.dataset.plus);if(x){x.qty++;render()}return}
+ const rd=e.target.closest("[data-ready]");if(rd){const o=state.orders.find(a=>a.id===rd.dataset.ready);if(o){o.status="Preparado";save();render()}return}
+ const py=e.target.closest("[data-pay]");if(py){const o=state.orders.find(a=>a.id===py.dataset.pay);if(o){o.status="Cobrado";o.paidAt=new Date().toISOString();save();render()}return}
+ const tb=e.target.closest("[data-table]");if(tb){state.table=tb.dataset.table;state.tab="Pedido";render();return}
+ const iv=e.target.closest("[data-inv-in]");if(iv){const x=state.inventory.find(a=>a.id===iv.dataset.invIn);if(x){const q=prompt("¿Cuánta cantidad entró?","1");const n=Number(q);if(n>0){x.stock=Number(x.stock)+n;save();render()}}return}
+ const ov=e.target.closest("[data-inv-out]");if(ov){const x=state.inventory.find(a=>a.id===ov.dataset.invOut);if(x){const q=prompt("¿Cuánta cantidad salió?","1");const n=Number(q);if(n>0){x.stock=Math.max(0,Number(x.stock)-n);save();render()}}return}
+ const dv=e.target.closest("[data-inv-del]");if(dv){const x=state.inventory.find(a=>a.id===dv.dataset.invDel);if(x&&confirm("¿Eliminar "+x.name+" del inventario?")){state.inventory=state.inventory.filter(a=>a.id!==x.id);save();render()}return}
+ if(e.target.id==="send"){if(state.cart.length)sendConfirm();return}
+ if(e.target.id==="clear"){state.cart=[];render();return}
+});
+document.addEventListener("click",e=>{
+ if(e.target.id!=="addInv")return;
+ const name=($("invName")?.value||"").trim(), stock=Number($("invStock")?.value||0), min=Number($("invMin")?.value||0), cost=Number($("invCost")?.value||0);
+ if(!name){alert("Escribe el nombre del producto.");return}
+ const existing=state.inventory.find(x=>x.name.toLowerCase()===name.toLowerCase());
+ if(existing){existing.stock=Number(existing.stock)+stock;existing.min=min;existing.cost=cost||existing.cost}else state.inventory.push({id:"INV"+Date.now()+Math.random(),name,stock,min,cost});
+ save();render();
+});
+document.addEventListener("change",e=>{if(e.target.id==="table"){state.table=e.target.value;render();}else if(e.target.id==="type"){state.type=e.target.value;render();}});
+document.addEventListener("input",e=>{if(e.target.id==="customer")state.name=e.target.value});
+render();
+if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+</script>
+</body>
+</html>
